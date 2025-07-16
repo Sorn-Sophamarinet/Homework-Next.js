@@ -36,7 +36,7 @@ export default async function Page() {
             href="/shop"
             className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl hover:from-teal-600 hover:to-teal-700 filter drop-shadow-md hover:drop-shadow-lg transition-all"
           >
-            បញ្ជាទិញទំនិញ
+            បញ្ជាការទិញទំនិញ
           </Link>
         </div>
       </div>
