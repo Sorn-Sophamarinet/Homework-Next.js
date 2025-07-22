@@ -20,14 +20,14 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-lg max-w-sm">
+    <div className="bg-white rounded-lg overflow-hidden shadow-lg max-w-sm">
       <Link href={`/product/${product.id}`} className="no-underline">
         <div className="relative">
           <Image
             width={300}
             height={300}
             className="w-full"
-            src={product.thumbnail}
+            src={product?.thumbnail}
             alt={product.title}
             unoptimized
             priority

@@ -1,5 +1,4 @@
-'use client'
-import type { Metadata } from "next";
+"use client";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
@@ -8,9 +7,7 @@ import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Error from "./error";
 import localFont from "next/font/local";
 import NavbarWrapper from "@/components/header/NavbarWrapper";
-import { Provider } from "react-redux";
-import ProductCard from "@/components/product/ProductCard";
-import { products } from "@/data/product";
+import { Providers } from "@/lib/Providers";
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu-mono",
@@ -30,7 +27,6 @@ export const khmerFont = localFont({
 });
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
@@ -38,14 +34,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={` ${ubuntu.variable} ${khmerFont.variable} antialiased`}>
-        <Provider>
+        <Providers>
           <ErrorBoundary errorComponent={Error}>
-          <Suspense fallback={<Loading />}>
-          <NavbarWrapper />
-            {children}
-          </Suspense>
-        </ErrorBoundary>
-        </Provider>
+            <Suspense fallback={<Loading />}>
+              <NavbarWrapper />
+              {children}
+            </Suspense>
+          </ErrorBoundary>
+        </Providers>
       </body>
     </html>
   );
