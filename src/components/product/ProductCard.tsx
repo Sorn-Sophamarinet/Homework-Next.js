@@ -1,35 +1,56 @@
+"use client";
+import { addToCart } from '@/lib/features/cartSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { ProductType } from '@/types/ProductType';
 import Image from 'next/image';
-import React from 'react'
+import Link from 'next/link';
+import React from 'react';
 
-export default function ProductCard({id, title,description, price, thumbnail}:ProductType) {
+type ProductCardProps = {
+  product: ProductType;
+};
+
+export default function ProductCard({ product }: ProductCardProps) {
+  const dispatch = useAppDispatch();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log(`Adding product ${product.id} to cart`);
+    dispatch(addToCart(product));
+  };
+
   return (
-    <div key={id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden group cursor-pointer">
-      <div className="relative">
-        <Image
-          src={thumbnail}
-          alt={title}
-          className="w-full h-60 object-cover group-hover:scale-105 transition-transform"
-          unoptimized
-            width={500}
+    <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-lg max-w-sm">
+      <Link href={`/product/${product.id}`} className="no-underline">
+        <div className="relative">
+          <Image
+            width={300}
             height={300}
-        />
-        <span className="absolute top-3 right-3 bg-red-500 text-white text-xs px-2 py-1 rounded font-bold">
-          NEW
-        </span>
-      </div>
-      <div className="p-5">
-        <h3 className="text-lg font-bold text-gray-900 mb-1">
-          {title}
-        </h3>
-        <p className="text-sm text-gray-500 mb-2">{description}</p>
-        <div className="flex justify-between items-center mt-4">
-          <span className="text-xl font-bold text-green-600">${price}</span>
-          <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800">
-            Buy Now
-          </button>
+            className="w-full"
+            src={product.thumbnail}
+            alt={product.title}
+            unoptimized
+            priority
+          />
+          <div className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-medium">
+            SALE
+          </div>
         </div>
-      </div>
+        <div className="p-4">
+          <h3 className="text-lg font-medium mb-2 line-clamp-1">{product.title}</h3>
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
+          <p className="text-gray-500 text-xs mb-2">Category: {product.category}</p>
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-lg">${product.price}</span>
+          </div>
+        </div>
+      </Link>
+      <button
+        onClick={handleAddToCart}
+        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-b-lg w-full transition duration-200 ease-in-out"
+      >
+        Add to Cart
+      </button>
     </div>
   );
 }

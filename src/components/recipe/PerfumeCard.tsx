@@ -1,3 +1,4 @@
+'use client'
 import { RecipeType } from "@/types/RecipeType"; // Consider renaming to PerfumeType
 import Image from "next/image";
 import React from "react";

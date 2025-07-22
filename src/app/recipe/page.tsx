@@ -1,5 +1,4 @@
 "use client";
-
 import RecipeCard from "@/components/recipe/PerfumeCard";
 import { RecipeType } from "@/types/RecipeType";
 import React from "react";

@@ -1,3 +1,5 @@
+import { products } from "@/data/product";
+
 export default function PhotosLayout({
   children,
   modal,
@@ -9,6 +11,7 @@ export default function PhotosLayout({
     <>
       {children}
       {modal}
+
     </>
   );
 }
