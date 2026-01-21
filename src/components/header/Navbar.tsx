@@ -4,8 +4,11 @@ import Link from "next/link";
 import { navLinks } from "./menu";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/stores";
 
 export default function NavbarComponent() {
+  const count = useSelector((state:RootState)=>state.cart.itemsCount)
   const pathname = usePathname();
 
   return (
@@ -30,6 +33,20 @@ export default function NavbarComponent() {
             className="text-white bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 focus:ring-4 focus:ring-orange-300 font-semibold rounded-full text-sm px-6 py-2.5 sm:mr-2 lg:mr-0 focus:outline-none transition-all duration-200"
           >
             Get Started
+          </Link>
+          <Link
+            href="/cart"
+            className="relative flex items-center text-white bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 focus:ring-4 focus:ring-orange-300 font-semibold rounded-full text-sm px-6 py-2.5 sm:mr-2 lg:mr-0 focus:outline-none transition-all duration-200 mx-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 mr-2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437m0 0l1.7 6.374a2.25 2.25 0 002.183 1.704h7.299a2.25 2.25 0 002.183-1.704l1.7-6.374m-15.352 0h15.352" />
+              <circle cx="9" cy="20" r="1.25" />
+              <circle cx="17" cy="20" r="1.25" />
+            </svg>
+            <span className="ml-1">Cart</span>
+            {count > 0 && (
+              <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center border-2 border-white">{count}</span>
+            )}
           </Link>
           <button
             data-collapse-toggle="mobile-menu-2"

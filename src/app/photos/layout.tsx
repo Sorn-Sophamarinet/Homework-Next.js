@@ -1,3 +1,4 @@
+
 export default function PhotosLayout({
   children,
   modal,
@@ -9,6 +10,7 @@ export default function PhotosLayout({
     <>
       {children}
       {modal}
+
     </>
   );
 }

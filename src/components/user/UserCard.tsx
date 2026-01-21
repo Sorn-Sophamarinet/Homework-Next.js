@@ -1,3 +1,4 @@
+'use client'
 import { UserType } from '@/types/UserType'
 import Image from 'next/image'
 import Link from 'next/link';

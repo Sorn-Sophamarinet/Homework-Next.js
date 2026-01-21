@@ -1,285 +1,78 @@
+'use client';
+import Loading from '@/app/loading';
+import { useGetProductByIdQuery } from '@/lib/api/productsApi';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
 
-import React from "react";
-import Image from "next/image";
-// import { products } from "@/data/product";
-import { ProductType } from "@/types/ProductType";
-import { PageProps } from "@/types/ParamType";
-import { Metadata } from "next";
+export default function ProductDetail() {
+    const params = useParams()
+    const productId = Number.parseInt(params.id as string)
 
-export async function generateMetadata(
-  props: any
-): Promise<Metadata> {
-  const { params } = props;
+    // Using RTK Query to fetch products
+    const { data, isLoading, error } = useGetProductByIdQuery(productId);
+    if (isLoading) return <Loading />;
+    if (error) return <p className='text-red-500 text-center'>Failed to load products</p>;
 
-  try {
-    const res = await fetch(
-      `${process.env.BASE_URL}products/${params.id}`
-    );
-    if (!res.ok) {
-      return { title: "Product not found" };
-    }
+    if (!data) return <p className='text-red-500 text-center'>Product not found</p>;
+    console.log(data.title);
 
-    const product = await res.json();
-
-    return {
-      title: product?.title ?? "Product Detail",
-      description: product?.description ?? "",
-      openGraph: {
-        title: product?.title,
-        description: product?.description,
-        images: [product?.thumbnail],
-      },
-    };
-  } catch {
-    return {
-      title: "Product not found",
-    };
-  }
-}
-
-async function getProduct(id: string) {
-  const BASE_URL = `${process.env.BASE_URL}products/${id}`;
-  const res = await fetch(BASE_URL);
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
-  const data = (await res).json();
-  const products: ProductType = await data;
-  return products;
-}
-export default async function ProductPage({ params }: PageProps) {
-  const { id } = await params;
-  const product = await getProduct(id); // Convert string to number
-
-  // const product = products.find((p) => p.id === productId);
-
-  if (!product) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-red-600">Product Not Found</h1>
-        <p className="text-gray-600 mt-2">
-          The product you are looking for does not exist.
-        </p>
-      </div>
-    );
-  }
+        <div className="w-[90%] mx-auto my-10">
+            <div className="flex bg-white rounded-lg shadow dark:bg-gray-800 flex-col md:flex-row">
+                <div className="relative w-full md:w-[50%] flex justify-center items-center">
+                    <Image
+                        src={data.thumbnail}alt={data.title}
+                        width={300}
+                        height={300}
+                        unoptimized
+                        className="object-cover w-full h-48 md:h-full rounded-t-lg md:rounded-l-lg md:rounded-t-none"
+                        />
+                </div>
+                <form className="flex-auto p-6">
+                    <div className="flex flex-wrap">
+                        <h1 className="flex-auto text-xl font-semibold dark:text-gray-50">{data.title}</h1>
+                        <div className="text-xl font-semibold text-gray-500 dark:text-gray-300">${data.price}</div>
+                        <div className="flex-none w-full mt-2 text-sm font-medium text-gray-500 dark:text-gray-300">In stock</div>
+                    </div>
+                    <div className="flex items-baseline mt-4 mb-6 text-gray-700 dark:text-gray-300">
+                        <div className="flex space-x-2">
 
-  return (
-    <div className="bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-wrap -mx-4">
-          {/* Product Images */}
-          <div className="w-full md:w-1/2 px-4 mb-8">
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <Image
-                src={product.thumbnail}
-                alt={product.title}
-                width={800}
-                height={600}
-                className="w-full h-auto rounded-lg object-contain"
-                priority
-                unoptimized
-              />
+                            <label className="text-center">
+
+                                <input type="radio"
+                                    className="flex items-center justify-center w-6 h-6 accent-violet-600 bg-gray-100 rounded-lg dark:bg-gray-600"
+                                    name="size" value="xs" />XS
+                            </label>
+                            <label className="text-center">
+                                <input type="radio" className="flex items-center justify-center w-6 h-6 accent-violet-600" name="size"
+                                    value="s" />S
+                            </label>
+                            <label className="text-center">
+                                <input type="radio" className="flex items-center justify-center w-6 h-6 accent-violet-600" name="size"
+                                    value="m" />M
+                            </label>
+                            <label className="text-center">
+                                <input type="radio" className="flex items-center justify-center w-6 h-6 accent-violet-600" name="size"
+                                    value="l" />L
+                            </label>
+                            <label className="text-center">
+                                <input type="radio" className="flex items-center justify-center w-6 h-6 accent-violet-600" name="size"
+                                    value="xl" />XL
+                            </label>
+                        </div>
+                        <a href="#"
+                            className="hidden ml-auto text-sm text-gray-500 underline md:block dark:text-gray-300">Size
+                            Guide
+                        </a>
+                    </div>
+                    <div className="flex mb-4 text-sm font-medium">
+                        <button type="button"
+                            className="py-2 px-4 bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg ">Add to Cart</button>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">{data.description}</p>
+                    <p className="text-lg dark:text-gray-300 bg-blue-300 p-2 rounded-lg mt-5 text-white">Category : {data.category}</p>
+                </form>
             </div>
-
-            <div className="flex gap-4 py-4 justify-center overflow-x-auto">
-              {product.images.map((image, index) => (
-                <div key={index} className="bg-white p-2 rounded-md shadow-sm">
-                  <Image
-                    src={image}
-                    alt={`${product.title} view ${index + 1}`}
-                    width={100}
-                    height={100}
-                    className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
-                    unoptimized
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Product Details */}
-          <div className="w-full md:w-1/2 px-4">
-            <div className="p-6 rounded-lg">
-              <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
-              <p className="text-gray-600 mb-1">{product.description}</p>
-              <p className="text-gray-500 text-sm mb-4">SKU: {product.sku}</p>
-
-              <div className="mb-4">
-                <span className="text-2xl font-bold text-gray-900">
-                  ${product.price.toFixed(2)}
-                </span>
-                {product.originalPrice && (
-                  <span className="text-gray-500 line-through ml-2">
-                    ${product.originalPrice.toFixed(2)}
-                  </span>
-                )}
-                {product.originalPrice && (
-                  <span className="ml-2 text-green-600 font-medium">
-                    {Math.round(
-                      (1 - product.price / product.originalPrice) * 100
-                    )}
-                    % OFF
-                  </span>
-                )}
-              </div>
-
-              {/* Rating */}
-              <div className="flex items-center mb-4">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className={`size-5 ${
-                        i < Math.floor(product.rating)
-                          ? "text-yellow-500"
-                          : "text-gray-300"
-                      }`}
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ))}
-                </div>
-                <span className="ml-2 text-gray-600 text-sm">
-                  {product.rating.toFixed(1)} ({product.reviewCount} reviews)
-                </span>
-              </div>
-
-              {/* Color Selection */}
-              {product.colors && product.colors.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2">Color:</h3>
-                  <div className="flex gap-3">
-                    {product.colors.map((color) => (
-                      <button
-                        key={color}
-                        className={`size-8 rounded-full border-2 border-transparent hover:border-gray-300 transition-all`}
-                        style={{ backgroundColor: color }}
-                        title={color.charAt(0).toUpperCase() + color.slice(1)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Quantity */}
-              <div className="mb-6">
-                <label
-                  htmlFor="quantity"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Quantity:
-                </label>
-                <div className="flex items-center">
-                  <button className="size-8 flex items-center justify-center border border-gray-300 rounded-l-md bg-gray-100 hover:bg-gray-200">
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    min="1"
-                    defaultValue="1"
-                    className="w-12 h-8 text-center border-t border-b border-gray-300"
-                  />
-                  <button className="size-8 flex items-center justify-center border border-gray-300 rounded-r-md bg-gray-100 hover:bg-gray-200">
-                    +
-                  </button>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-4 mb-6">
-                <button className="flex-1 bg-indigo-600 flex gap-2 items-center justify-center text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition-colors">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                    />
-                  </svg>
-                  Add to Cart
-                </button>
-                <button className="flex-1 bg-gray-100 flex gap-2 items-center justify-center text-gray-800 px-6 py-3 rounded-md hover:bg-gray-200 transition-colors">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                    />
-                  </svg>
-                  Wishlist
-                </button>
-              </div>
-
-              {/* Product Description */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-2">Description</h3>
-                <ul className="list-disc">
-                  <li className="text-gray-700 mb-2">
-                    {product.warrantyInformation}
-                  </li>
-                  <li className="text-gray-700 mb-2">
-                    <strong>Brand:</strong> {product.shippingInformation}
-                  </li>
-                  <li className="text-gray-700 mb-2">
-                    <strong>Category:</strong>{" "}
-                    <span className="text-green-500">
-                      {product.availabilityStatus}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-              {/* Specifications */}
-              {product.specifications && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2">Specifications</h3>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <table className="w-full">
-                      <tbody>
-                        {Object.entries(product.specifications).map(
-                          ([key, value]) => (
-                            <tr
-                              key={key}
-                              className="border-b border-gray-200 last:border-0"
-                            >
-                              <td className="py-2 font-medium text-gray-700 capitalize">
-                                {key.replace(/([A-Z])/g, " $1").trim()}:
-                              </td>
-                              <td className="py-2 text-gray-600">{value}</td>
-                            </tr>
-                          )
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    )
 }

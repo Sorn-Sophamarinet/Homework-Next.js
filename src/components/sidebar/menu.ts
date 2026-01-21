@@ -1,3 +1,4 @@
+'use client'
 import { Home, Settings,Table } from "lucide-react";
 // Menu items.
 export const items = [

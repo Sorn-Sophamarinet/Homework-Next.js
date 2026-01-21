@@ -1,3 +1,4 @@
+'use client'
 import { MenuLink } from "@/types/MenuLink";
 
 export const navLinks: MenuLink[] = [
